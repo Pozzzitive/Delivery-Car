@@ -6,7 +6,9 @@ using UnityEngine.InputSystem;
 public class Driver : MonoBehaviour
 {
     [SerializeField]float steerSpeed = 0.2f;
-    [SerializeField]float carSpeed = 0.02f;
+    [SerializeField]float currentCarSpeed = 5f;
+    [SerializeField]float boostCarSpeed = 15f;
+    [SerializeField]float normalCarSpeed = 5f;
     float steer = 0f;
     float direction = 0f;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -15,10 +17,25 @@ public class Driver : MonoBehaviour
         
     }
 
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Boost"))
+        {
+            currentCarSpeed = boostCarSpeed;
+            Destroy(collision.gameObject);
+        }
+    }
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        currentCarSpeed = normalCarSpeed;
+    }
+
     // Update is called once per frame
     void Update()
     {
         //transform.Rotate(0, 0, steerSpeed);
+        
+        #region carSteering
         if (!Keyboard.current.wKey.isPressed && !Keyboard.current.sKey.isPressed)
         {
             direction = 0f;
@@ -58,11 +75,16 @@ public class Driver : MonoBehaviour
                 steer = 1f;
             }
         }
+        #endregion
 
 
-        float moveAmmount = direction * carSpeed * Time.deltaTime;
+        float moveAmmount = direction * currentCarSpeed * Time.deltaTime;
         float steerAmmount = steer * steerSpeed * Time.deltaTime;
         transform.Translate(new Vector3(0, moveAmmount, 0), Space.Self);
         transform.Rotate(0, 0, steerAmmount);
     }
+
+    
+
+
 }

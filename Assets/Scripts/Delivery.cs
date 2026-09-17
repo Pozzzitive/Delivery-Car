@@ -19,7 +19,6 @@ public class Delivery : MonoBehaviour
             Destroy(collision.gameObject, packageDestroyDelay);
             Debug.Log("Package touched");
             hasPackage = true;
-            
         }
         if (collision.CompareTag("Customer") && hasPackage)
         {
