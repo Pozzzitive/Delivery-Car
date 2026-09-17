@@ -2,6 +2,8 @@ using System.Diagnostics.Tracing;
 using System.Reflection.Metadata;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using TMPro;
+using System;
 
 public class Driver : MonoBehaviour
 {
@@ -9,12 +11,20 @@ public class Driver : MonoBehaviour
     [SerializeField]float currentCarSpeed = 5f;
     [SerializeField]float boostCarSpeed = 15f;
     [SerializeField]float normalCarSpeed = 5f;
+
+    [SerializeField] TMP_Text boostText;
+    [SerializeField] TMP_Text packagesUI;
+    GameObject[] packagesToFind;
     float steer = 0f;
     float direction = 0f;
+    String packagesUItext;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        packagesUItext = packagesUI.text;
+        packagesToFind = GameObject.FindGameObjectsWithTag ("");
+        boostText.gameObject.SetActive(false);
+        packagesUI.text = packagesUItext + packagesToFind.Length;
     }
 
     void OnTriggerEnter2D(Collider2D collision)
@@ -22,12 +32,14 @@ public class Driver : MonoBehaviour
         if (collision.CompareTag("Boost"))
         {
             currentCarSpeed = boostCarSpeed;
+            boostText.gameObject.SetActive(true);
             Destroy(collision.gameObject);
         }
     }
     void OnCollisionEnter2D(Collision2D collision)
     {
         currentCarSpeed = normalCarSpeed;
+        boostText.gameObject.SetActive(false);
     }
 
     // Update is called once per frame
@@ -76,7 +88,8 @@ public class Driver : MonoBehaviour
             }
         }
         #endregion
-
+        packagesToFind = GameObject.FindGameObjectsWithTag ("Package");
+        packagesUI.text = packagesUItext + packagesToFind.Length;
 
         float moveAmmount = direction * currentCarSpeed * Time.deltaTime;
         float steerAmmount = steer * steerSpeed * Time.deltaTime;
